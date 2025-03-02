@@ -1,6 +1,6 @@
 use {
     agave_geyser_plugin_interface::geyser_plugin_interface::{
-        ReplicaAccountInfoV3, ReplicaBlockInfoV4, ReplicaEntryInfoV2, ReplicaTransactionInfoV2,
+        ReplicaAccountInfoV3, ReplicaBlockInfoV4, ReplicaEntryInfoV2, ReplicaTransactionInfoV3,
         SlotStatus as GeyserSlotStatus,
     },
     anyhow::Context,
@@ -745,7 +745,7 @@ fn convert_prost_to_raw(msg: &SubscribeUpdate) -> anyhow::Result<Option<Vec<u8>>
 
             let msg = ProtobufMessage::Transaction {
                 slot: *slot,
-                transaction: &ReplicaTransactionInfoV2 {
+                transaction: &ReplicaTransactionInfoV3 {
                     signature: &tx
                         .signature
                         .as_slice()
@@ -755,6 +755,8 @@ fn convert_prost_to_raw(msg: &SubscribeUpdate) -> anyhow::Result<Option<Vec<u8>>
                     transaction: &sanitized_transaction,
                     transaction_status_meta: &transaction_status_meta,
                     index: tx.index as usize,
+                    //TODO! This probably shouldnt be empty
+                    post_accounts_states: vec![],
                 },
             };
             msg.encode_with_timestamp(ProtobufEncoder::Raw, created_at)

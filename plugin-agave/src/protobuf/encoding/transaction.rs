@@ -1,6 +1,6 @@
 use {
     super::{bytes_encode, bytes_encoded_len, RewardWrapper},
-    agave_geyser_plugin_interface::geyser_plugin_interface::ReplicaTransactionInfoV2,
+    agave_geyser_plugin_interface::geyser_plugin_interface::ReplicaTransactionInfoV3,
     bytes::BufMut,
     prost::encoding,
     solana_account_decoder::parse_token::UiTokenAmount,
@@ -25,11 +25,11 @@ use {
 #[derive(Debug)]
 pub struct Transaction<'a> {
     slot: Slot,
-    transaction: &'a ReplicaTransactionInfoV2<'a>,
+    transaction: &'a ReplicaTransactionInfoV3<'a>,
 }
 
 impl<'a> Transaction<'a> {
-    pub const fn new(slot: Slot, transaction: &'a ReplicaTransactionInfoV2<'a>) -> Self {
+    pub const fn new(slot: Slot, transaction: &'a ReplicaTransactionInfoV3<'a>) -> Self {
         Self { slot, transaction }
     }
 }
@@ -72,17 +72,17 @@ impl<'a> prost::Message for Transaction<'a> {
 }
 
 #[derive(Debug)]
-struct ReplicaWrapper<'a>(&'a ReplicaTransactionInfoV2<'a>);
+struct ReplicaWrapper<'a>(&'a ReplicaTransactionInfoV3<'a>);
 
 impl<'a> Deref for ReplicaWrapper<'a> {
-    type Target = ReplicaTransactionInfoV2<'a>;
+    type Target = ReplicaTransactionInfoV3<'a>;
 
     fn deref(&self) -> &Self::Target {
         self.0
     }
 }
 
-impl<'a> prost::Message for ReplicaWrapper<'a> {
+impl prost::Message for ReplicaWrapper<'_> {
     fn encode_raw(&self, buf: &mut impl BufMut)
     where
         Self: Sized,
@@ -192,7 +192,7 @@ fn signatures_encode(tag: u32, signatures: &[Signature], buf: &mut impl BufMut) 
     }
 }
 
-fn signatures_encoded_len(tag: u32, signatures: &[Signature]) -> usize {
+const fn signatures_encoded_len(tag: u32, signatures: &[Signature]) -> usize {
     (encoding::key_len(tag)
         + encoding::encoded_len_varint(SIGNATURE_BYTES as u64)
         + SIGNATURE_BYTES)
@@ -202,7 +202,7 @@ fn signatures_encoded_len(tag: u32, signatures: &[Signature]) -> usize {
 #[derive(Debug)]
 struct SanitizedMessageWrapper<'a>(&'a SanitizedMessage);
 
-impl<'a> Deref for SanitizedMessageWrapper<'a> {
+impl Deref for SanitizedMessageWrapper<'_> {
     type Target = SanitizedMessage;
 
     fn deref(&self) -> &Self::Target {
@@ -375,7 +375,7 @@ fn pubkeys_encode(tag: u32, pubkeys: &[Pubkey], buf: &mut impl BufMut) {
     }
 }
 
-fn pubkeys_encoded_len(tag: u32, pubkeys: &[Pubkey]) -> usize {
+const fn pubkeys_encoded_len(tag: u32, pubkeys: &[Pubkey]) -> usize {
     (encoding::key_len(tag) + encoding::encoded_len_varint(PUBKEY_BYTES as u64) + PUBKEY_BYTES)
         * pubkeys.len()
 }

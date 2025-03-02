@@ -21,7 +21,7 @@ publish = false
 
 [workspace.dependencies]
 affinity = "0.1.2"
-agave-geyser-plugin-interface = "~2.1.1"
+agave-geyser-plugin-interface = {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
 anyhow = "1.0.62"
 arrayvec = "0.7.6"
 base64 = "0.22.1"
@@ -47,7 +47,7 @@ indicatif = "0.17.9"
 json5 = "0.4.1"
 jsonrpsee-types = "0.24.8"
 lazy_static = "1.4.0"
-log = "0.4.22"
+log = "0.4.26"
 maplit = "1.0.2"
 pin-project-lite = "0.2.15"
 prometheus = "0.13.4"
@@ -73,17 +73,17 @@ signal-hook = "0.3.17"
 slab = "0.4.9"
 smallvec = "1.13.2"
 socket2 = "0.5.8"
-solana-account = "~2.1.1"
-solana-account-decoder = "~2.1.1"
-solana-client = "~2.1.1"
-solana-logger = "~2.1.1"
-solana-rpc = "~2.1.1"
-solana-rpc-client-api = "~2.1.1"
-solana-sdk = "~2.1.1"
-solana-storage-proto = "~2.1.1"
-solana-transaction-status = "~2.1.1"
-solana-version = "~2.1.1"
-spl-token-2022 = "6.0.0"
+solana-account = "2.2.1"
+solana-account-decoder =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
+solana-client =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
+solana-logger = "2.2.1"
+solana-rpc =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
+solana-rpc-client-api =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
+solana-sdk = "2.2.1"
+solana-storage-proto =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
+solana-transaction-status = {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
+solana-version =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
+spl-token-2022 = "7.0.0"
 thiserror = "2.0.7"
 tokio = "1.42.0"
 tokio-rustls = "0.26.1"
@@ -94,7 +94,7 @@ tracing = "0.1.41"
 tracing-subscriber = "0.3.19"
 vergen = "9.0.2"
 webpki-roots = "0.26.7"
-yellowstone-grpc-proto = "5.0.0"
+yellowstone-grpc-proto = {git = "https://github.com/4r33x/yellowstone-grpc"}
 
 [workspace.lints.clippy]
 clone_on_ref_ptr = "deny"

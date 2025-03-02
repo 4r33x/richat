@@ -8,6 +8,8 @@ pub use {
 
 #[cfg(any(test, feature = "fixtures"))]
 pub mod fixtures {
+    use agave_geyser_plugin_interface::geyser_plugin_interface::ReplicaTransactionInfoV3;
+
     use {
         agave_geyser_plugin_interface::geyser_plugin_interface::{
             ReplicaAccountInfoV3, ReplicaBlockInfoV4, ReplicaEntryInfoV2, ReplicaTransactionInfoV2,
@@ -383,13 +385,15 @@ pub mod fixtures {
     }
 
     impl GeneratedTransaction {
-        pub const fn to_replica(&self) -> (Slot, ReplicaTransactionInfoV2<'_>) {
-            let replica = ReplicaTransactionInfoV2 {
+        pub const fn to_replica(&self) -> (Slot, ReplicaTransactionInfoV3<'_>) {
+            let replica = ReplicaTransactionInfoV3 {
                 signature: &self.signature,
                 is_vote: self.is_vote,
                 transaction: &self.sanitized_transaction,
                 transaction_status_meta: &self.transaction_status_meta,
                 index: self.index,
+                //TODO! this shouldnt be empty
+                post_accounts_states: vec![],
             };
             (self.slot, replica)
         }
@@ -404,6 +408,7 @@ pub mod fixtures {
                         &self.transaction_status_meta,
                     )),
                     index: self.index as u64,
+                    post_accounts_states: vec![],
                 }),
                 slot: self.slot,
             }
