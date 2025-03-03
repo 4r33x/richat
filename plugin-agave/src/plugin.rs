@@ -252,7 +252,6 @@ impl GeyserPlugin for Plugin {
             }
             ReplicaTransactionInfoVersions::V0_0_3(info) => info,
         };
-
         let inner = self.inner.as_ref().expect("initialized");
         inner.messages.push(
             ProtobufMessage::Transaction { slot, transaction },
