@@ -4931,7 +4931,7 @@ dependencies = [
 
 [[package]]
 name = "richat"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "affinity",
  "anyhow",
@@ -4984,7 +4984,7 @@ dependencies = [
 
 [[package]]
 name = "richat-cli"
-version = "2.2.1"
+version = "2.2.2"
 dependencies = [
  "agave-geyser-plugin-interface",
  "anyhow",
@@ -5000,6 +5000,7 @@ dependencies = [
  "richat-plugin-agave",
  "richat-proto",
  "richat-shared",
+ "rustls 0.23.21",
  "serde",
  "serde_json",
  "serde_yaml",
@@ -5062,7 +5063,7 @@ dependencies = [
 
 [[package]]
 name = "richat-plugin-agave"
-version = "2.1.0"
+version = "2.1.1"
 dependencies = [
  "affinity",
  "agave-geyser-plugin-interface",
@@ -5082,6 +5083,7 @@ dependencies = [
  "prost-types 0.13.5",
  "richat-proto",
  "richat-shared",
+ "rustls 0.23.21",
  "serde",
  "serde_json",
  "smallvec",
