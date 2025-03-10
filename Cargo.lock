@@ -5128,6 +5128,7 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
+ "solana-account",
  "solana-account-decoder",
  "solana-logger",
  "solana-sdk",
@@ -11078,7 +11079,7 @@ dependencies = [
 [[package]]
 name = "yellowstone-grpc-proto"
 version = "5.0.0"
-source = "git+https://github.com/4r33x/yellowstone-grpc#c1721d147a71cb2bc716dff14e965840cac986d5"
+source = "git+https://github.com/4r33x/yellowstone-grpc#4f2ed402f3cb2f642719e6b660dcef29aa6611d8"
 dependencies = [
  "agave-geyser-plugin-interface",
  "anyhow",
@@ -11091,6 +11092,7 @@ dependencies = [
  "protobuf-src",
  "serde",
  "smallvec",
+ "solana-account",
  "solana-account-decoder",
  "solana-sdk",
  "solana-transaction-status",

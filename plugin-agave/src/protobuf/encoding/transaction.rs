@@ -1,10 +1,10 @@
-use agave_geyser_plugin_interface::geyser_plugin_interface::TxnReplicaAccountInfo;
-
 use {
     super::{bytes_encode, bytes_encoded_len, RewardWrapper},
     agave_geyser_plugin_interface::geyser_plugin_interface::ReplicaTransactionInfoV3,
     bytes::BufMut,
     prost::encoding,
+    solana_account::AccountSharedData,
+    solana_account::ReadableAccount,
     solana_account_decoder::parse_token::UiTokenAmount,
     solana_sdk::{
         clock::Slot,
@@ -107,7 +107,7 @@ impl prost::Message for ReplicaWrapper<'_> {
         let msgs: Vec<_> = self
             .post_accounts_states
             .iter()
-            .map(|(pubkey, rep)| TransactionPostAccountState((pubkey, rep)))
+            .map(|(pubkey, rep)| TransactionPostAccountState((pubkey.as_array(), rep)))
             .collect();
         prost::encoding::message::encode_repeated(6, &msgs, buf);
     }
@@ -117,7 +117,7 @@ impl prost::Message for ReplicaWrapper<'_> {
         let accounts: Vec<_> = self
             .post_accounts_states
             .iter()
-            .map(|(pubkey, rep)| TransactionPostAccountState((pubkey, rep)))
+            .map(|(pubkey, rep)| TransactionPostAccountState((pubkey.as_array(), rep)))
             .collect();
         bytes_encoded_len(1, self.signature.as_ref())
             + if self.is_vote {
@@ -157,27 +157,27 @@ impl prost::Message for ReplicaWrapper<'_> {
 }
 
 #[derive(Debug)]
-struct TransactionPostAccountState<'a>((&'a [u8], &'a TxnReplicaAccountInfo<'a>));
+struct TransactionPostAccountState<'a>((&'a [u8], &'a AccountSharedData));
 
 impl prost::Message for TransactionPostAccountState<'_> {
     fn encode_raw(&self, buf: &mut impl BufMut) {
         let (pubkey, account) = &self.0;
         bytes_encode(1, pubkey, buf);
-        prost::encoding::uint64::encode(2, &account.lamports, buf);
-        bytes_encode(3, account.owner, buf);
-        prost::encoding::bool::encode(4, &account.executable, buf);
-        prost::encoding::uint64::encode(5, &account.rent_epoch, buf);
-        bytes_encode(6, account.data, buf);
+        prost::encoding::uint64::encode(2, &account.lamports(), buf);
+        bytes_encode(3, account.owner().as_array(), buf);
+        prost::encoding::bool::encode(4, &account.executable(), buf);
+        prost::encoding::uint64::encode(5, &account.rent_epoch(), buf);
+        bytes_encode(6, account.data(), buf);
     }
 
     fn encoded_len(&self) -> usize {
         let (pubkey, account) = &self.0;
         bytes_encoded_len(1, pubkey)
-            + prost::encoding::uint64::encoded_len(2, &account.lamports)
-            + bytes_encoded_len(3, account.owner)
-            + prost::encoding::bool::encoded_len(4, &account.executable)
-            + prost::encoding::uint64::encoded_len(5, &account.rent_epoch)
-            + bytes_encoded_len(6, account.data)
+            + prost::encoding::uint64::encoded_len(2, &account.lamports())
+            + bytes_encoded_len(3, account.owner().as_array())
+            + prost::encoding::bool::encoded_len(4, &account.executable())
+            + prost::encoding::uint64::encoded_len(5, &account.rent_epoch())
+            + bytes_encoded_len(6, account.data())
     }
 
     fn clear(&mut self) {

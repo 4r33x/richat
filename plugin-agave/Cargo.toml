@@ -48,6 +48,7 @@ solana-sdk = { workspace = true }
 solana-storage-proto = { workspace = true, optional = true }
 solana-transaction-status = { workspace = true }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+solana-account.workspace = true
 
 [dev-dependencies]
 criterion = { workspace = true }
