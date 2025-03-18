@@ -16,6 +16,29 @@ The minor version will be incremented upon a breaking change and the patch versi
 
 ### Breaking
 
+## 2025-03-12
+
+- cli-v4.0.0
+- client-v3.0.0
+- filter-v3.0.0
+- plugin-agave-v3.0.0
+- proto-v3.0.0
+- richat-v3.0.0
+- shared-v3.0.0
+
+### Breaking
+
+- solana: upgrade to v2.2 ([#85](https://github.com/lamports-dev/richat/pull/85))
+
+## 2025-03-12
+
+- richat-cli-v3.0.0
+- richat-filter-v2.4.1
+
+### Breaking
+
+- cli: add dragon's mouth support ([#83](https://github.com/lamports-dev/richat/pull/83))
+
 ## 2025-03-06
 
 - richat-cli-v2.2.2
