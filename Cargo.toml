@@ -76,7 +76,7 @@ socket2 = "0.5.8"
 solana-account = "2.2.1"
 solana-account-decoder =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
 solana-client =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
-solana-logger = "2.2.1"
+solana-logger = "2.3.1"
 solana-rpc =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
 solana-rpc-client-api =  {git = "https://github.com/4r33x/agave",  branch = "geyser_txn_accounts_data"}
 solana-sdk = "2.2.1"
