@@ -12,7 +12,7 @@ pub mod fixtures {
 
     use {
         agave_geyser_plugin_interface::geyser_plugin_interface::{
-            ReplicaAccountInfoV3, ReplicaBlockInfoV4, ReplicaEntryInfoV2, ReplicaTransactionInfoV2,
+            ReplicaAccountInfoV3, ReplicaBlockInfoV4, ReplicaEntryInfoV2,
             SlotStatus as GeyserSlotStatus,
         },
         prost_011::Message,
@@ -393,7 +393,7 @@ pub mod fixtures {
                 transaction_status_meta: &self.transaction_status_meta,
                 index: self.index,
                 //TODO! this shouldnt be empty
-                post_accounts_states: vec![],
+                post_accounts_states: &[],
             };
             (self.slot, replica)
         }

@@ -756,7 +756,7 @@ fn convert_prost_to_raw(msg: &SubscribeUpdate) -> anyhow::Result<Option<Vec<u8>>
                     transaction_status_meta: &transaction_status_meta,
                     index: tx.index as usize,
                     //TODO! This probably shouldnt be empty
-                    post_accounts_states: vec![],
+                    post_accounts_states: &[],
                 },
             };
             msg.encode_with_timestamp(ProtobufEncoder::Raw, created_at)
