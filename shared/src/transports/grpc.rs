@@ -1,3 +1,5 @@
+use tonic::service::InterceptorLayer;
+
 use {
     crate::{
         config::{deserialize_num_str, deserialize_x_token_set},
@@ -34,7 +36,6 @@ use {
     tokio::task::JoinError,
     tonic::{
         codec::{Codec, CompressionEncoding, DecodeBuf, Decoder, EncodeBuf, Encoder},
-        service::interceptor::interceptor,
         transport::{
             server::{Server, TcpIncoming},
             Identity, ServerTlsConfig,
@@ -166,15 +167,11 @@ impl ConfigGrpcServer {
 
     pub fn create_server_builder(&self) -> Result<(TcpIncoming, Server), CreateServerError> {
         // Bind service address
-        let incoming = TcpIncoming::new(
-            self.endpoint,
-            self.server_tcp_nodelay,
-            self.server_tcp_keepalive,
-        )
-        .map_err(|error| CreateServerError::Bind {
-            error,
-            endpoint: self.endpoint,
-        })?;
+        let incoming =
+            TcpIncoming::bind(self.endpoint).map_err(|error| CreateServerError::Bind {
+                error: error.into(),
+                endpoint: self.endpoint,
+            })?;
 
         // Create service
         let mut server_builder = Server::builder();
@@ -265,7 +262,7 @@ where
         // Spawn server
         Ok(tokio::spawn(async move {
             if let Err(error) = server_builder
-                .layer(interceptor(move |request: Request<()>| {
+                .layer(InterceptorLayer::new(move |request: Request<()>| {
                     if config.x_tokens.is_empty() {
                         Ok(request)
                     } else {
