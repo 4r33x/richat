@@ -1,3 +1,5 @@
+use tonic::service::InterceptorLayer;
+
 use {
     crate::{
         channel::{Messages, ParsedMessage, ReceiverSync},
@@ -40,10 +42,7 @@ use {
         thread::sleep,
         time::{Duration, SystemTime},
     },
-    tonic::{
-        service::interceptor::interceptor, Request, Response, Result as TonicResult, Status,
-        Streaming,
-    },
+    tonic::{Request, Response, Result as TonicResult, Status, Streaming},
     tracing::{error, info, warn},
 };
 
@@ -142,7 +141,7 @@ impl GrpcServer {
         // Spawn server
         let server = tokio::spawn(async move {
             if let Err(error) = server_builder
-                .layer(interceptor(move |request: Request<()>| {
+                .layer(InterceptorLayer::new(move |request: Request<()>| {
                     if config.x_token.is_empty() {
                         Ok(request)
                     } else {
