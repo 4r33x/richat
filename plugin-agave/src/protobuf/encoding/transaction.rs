@@ -1,8 +1,10 @@
 use {
     super::{bytes_encode, bytes_encoded_len, RewardWrapper},
-    agave_geyser_plugin_interface::geyser_plugin_interface::ReplicaTransactionInfoV2,
+    agave_geyser_plugin_interface::geyser_plugin_interface::ReplicaTransactionInfoV3,
     bytes::BufMut,
     prost::encoding,
+    solana_account::AccountSharedData,
+    solana_account::ReadableAccount,
     solana_account_decoder::parse_token::UiTokenAmount,
     solana_sdk::{
         clock::Slot,
@@ -25,11 +27,11 @@ use {
 #[derive(Debug)]
 pub struct Transaction<'a> {
     slot: Slot,
-    transaction: &'a ReplicaTransactionInfoV2<'a>,
+    transaction: &'a ReplicaTransactionInfoV3<'a>,
 }
 
 impl<'a> Transaction<'a> {
-    pub const fn new(slot: Slot, transaction: &'a ReplicaTransactionInfoV2<'a>) -> Self {
+    pub const fn new(slot: Slot, transaction: &'a ReplicaTransactionInfoV3<'a>) -> Self {
         Self { slot, transaction }
     }
 }
@@ -72,10 +74,10 @@ impl prost::Message for Transaction<'_> {
 }
 
 #[derive(Debug)]
-struct ReplicaWrapper<'a>(&'a ReplicaTransactionInfoV2<'a>);
+struct ReplicaWrapper<'a>(&'a ReplicaTransactionInfoV3<'a>);
 
 impl<'a> Deref for ReplicaWrapper<'a> {
-    type Target = ReplicaTransactionInfoV2<'a>;
+    type Target = ReplicaTransactionInfoV3<'a>;
 
     fn deref(&self) -> &Self::Target {
         self.0
@@ -102,11 +104,21 @@ impl prost::Message for ReplicaWrapper<'_> {
         if index != 0 {
             encoding::uint64::encode(5, &index, buf)
         }
+        let msgs: Vec<_> = self
+            .post_accounts_states
+            .iter()
+            .map(|(pubkey, rep)| TransactionPostAccountState((pubkey.as_array(), rep)))
+            .collect();
+        prost::encoding::message::encode_repeated(6, &msgs, buf);
     }
 
     fn encoded_len(&self) -> usize {
         let index = self.index as u64;
-
+        let accounts: Vec<_> = self
+            .post_accounts_states
+            .iter()
+            .map(|(pubkey, rep)| TransactionPostAccountState((pubkey.as_array(), rep)))
+            .collect();
         bytes_encoded_len(1, self.signature.as_ref())
             + if self.is_vote {
                 encoding::bool::encoded_len(2, &self.is_vote)
@@ -123,6 +135,7 @@ impl prost::Message for ReplicaWrapper<'_> {
             } else {
                 0
             }
+            + encoding::message::encoded_len_repeated(6, &accounts)
     }
 
     fn clear(&mut self) {
@@ -143,6 +156,47 @@ impl prost::Message for ReplicaWrapper<'_> {
     }
 }
 
+#[derive(Debug)]
+struct TransactionPostAccountState<'a>((&'a [u8], &'a AccountSharedData));
+
+impl prost::Message for TransactionPostAccountState<'_> {
+    fn encode_raw(&self, buf: &mut impl BufMut) {
+        let (pubkey, account) = &self.0;
+        bytes_encode(1, pubkey, buf);
+        prost::encoding::uint64::encode(2, &account.lamports(), buf);
+        bytes_encode(3, account.owner().as_array(), buf);
+        prost::encoding::bool::encode(4, &account.executable(), buf);
+        prost::encoding::uint64::encode(5, &account.rent_epoch(), buf);
+        bytes_encode(6, account.data(), buf);
+    }
+
+    fn encoded_len(&self) -> usize {
+        let (pubkey, account) = &self.0;
+        bytes_encoded_len(1, pubkey)
+            + prost::encoding::uint64::encoded_len(2, &account.lamports())
+            + bytes_encoded_len(3, account.owner().as_array())
+            + prost::encoding::bool::encoded_len(4, &account.executable())
+            + prost::encoding::uint64::encoded_len(5, &account.rent_epoch())
+            + bytes_encoded_len(6, account.data())
+    }
+
+    fn clear(&mut self) {
+        unimplemented!()
+    }
+
+    fn merge_field(
+        &mut self,
+        _tag: u32,
+        _wire_type: encoding::WireType,
+        _buf: &mut impl bytes::Buf,
+        _ctx: encoding::DecodeContext,
+    ) -> Result<(), prost::DecodeError>
+    where
+        Self: Sized,
+    {
+        unimplemented!()
+    }
+}
 #[derive(Debug)]
 struct SanitizedTransactionWrapper<'a>(&'a SanitizedTransaction);
 
