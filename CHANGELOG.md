@@ -12,9 +12,18 @@ The minor version will be incremented upon a breaking change and the patch versi
 
 ### Fixes
 
+- filter: fix memcmp decode data in the config ([#118](https://github.com/lamports-dev/richat/pull/118))
+- richat: do not send Block message to connected richat ([#122](https://github.com/lamports-dev/richat/pull/122))
+
 ### Features
 
+- proto: add version to quic response ([#115](https://github.com/lamports-dev/richat/pull/115))
+- richat: use jemalloc ([#117](https://github.com/lamports-dev/richat/pull/117))
+- shared: parse affinity with stride in range ([#120](https://github.com/lamports-dev/richat/pull/120))
+
 ### Breaking
+
+- richat: replay only processed commitment ([#116](https://github.com/lamports-dev/richat/pull/116))
 
 ## 2025-05-30
 
